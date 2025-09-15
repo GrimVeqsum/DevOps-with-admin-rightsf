@@ -10,10 +10,15 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
+ codex/add-tests-for-updatescore-and-getallusers-pnnel5
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
+
+
+@RunWith(RobolectricTestRunner::class)
+
 class MainActivityTest {
 
     @Test

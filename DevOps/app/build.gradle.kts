@@ -53,7 +53,9 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     testImplementation("org.robolectric:robolectric:4.10.3")
+codex/add-tests-for-updatescore-and-getallusers-pnnel5
     testImplementation("com.google.code.gson:gson:2.10.1")
+
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
