@@ -10,21 +10,19 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace DinoServer;
 
+[ExcludeFromCodeCoverage]
 public static class TelegramService
 {
-    private static string token = "8282986498:AAGSV11RSyUkl8uGWPTdh8oRelIJwEvdbSg";
     private static TelegramBotClient? _bot;
-    private static readonly ConcurrentDictionary<long, bool> _chatIds = new(); // потокобезопасное хранение chatId
+    private static readonly ConcurrentDictionary<long, bool> _chatIds = new();
     private static CancellationTokenSource? _cts;
-    private static IDbContextFactory<UserContext> _contextFactory;
+    private static IDbContextFactory<UserContext>? _contextFactory;
 
-    // Инициализация бота
     [ExcludeFromCodeCoverage]
-    public static void Initialize(IDbContextFactory<UserContext> contextFactory)
+    public static void Initialize(IDbContextFactory<UserContext> contextFactory, string token)
     {
         _contextFactory = contextFactory;
-        
-        if (_bot != null) return; // уже инициализирован
+        if (_bot != null) return;
 
         _bot = new TelegramBotClient(token);
         _cts = new CancellationTokenSource();
@@ -33,8 +31,7 @@ public static class TelegramService
             HandleUpdateAsync,
             HandleErrorAsync,
             new ReceiverOptions { AllowedUpdates = Array.Empty<UpdateType>() },
-            cancellationToken: _cts.Token
-        );
+            cancellationToken: _cts.Token);
     }
 
     [ExcludeFromCodeCoverage]
@@ -44,7 +41,7 @@ public static class TelegramService
         {
             Console.WriteLine($"Получено сообщение: {update.Message.Text}");
             var chatId = update.Message.Chat.Id;
-            _chatIds.TryAdd(chatId, true); // сохраняем всех, кто писал боту
+            _chatIds.TryAdd(chatId, true);
 
             var text = update.Message.Text?.Trim();
 
@@ -52,13 +49,12 @@ public static class TelegramService
             {
                 try
                 {
-                    // Формируем таблицу лидеров
                     var leaderboard = await BuildLeaderboardAsync();
-                    await bot.SendTextMessageAsync(chatId, leaderboard);
+                    await bot.SendMessage(chatId, leaderboard);
                 }
                 catch (Exception ex)
                 {
-                    await bot.SendTextMessageAsync(chatId, $"Ошибка при формировании таблицы лидеров: {ex.Message}");
+                    await bot.SendMessage(chatId, $"Ошибка при формировании таблицы лидеров: {ex.Message}");
                 }
             }
         }
@@ -71,7 +67,6 @@ public static class TelegramService
         return Task.CompletedTask;
     }
 
-    // Рассылка всем подписчикам
     [ExcludeFromCodeCoverage]
     public static async Task SendMessage(string message)
     {
@@ -85,7 +80,7 @@ public static class TelegramService
         {
             try
             {
-                await _bot.SendTextMessageAsync(chatId, message);
+                await _bot.SendMessage(chatId, message);
             }
             catch (Exception ex)
             {
@@ -94,25 +89,18 @@ public static class TelegramService
         }
     }
 
-    // Остановка бота
-    public static void Stop()
-    {
-        _cts?.Cancel();
-    }
-    
+    public static void Stop() => _cts?.Cancel();
+
     private static async Task<string> BuildLeaderboardAsync()
     {
-        // Нужно получить сервис доступа к базе
-        // Предполагаем, что у тебя есть DI, поэтому передадим фабрику контекста
-        await using var db = _contextFactory.CreateDbContext(); // <-- замените на свою фабрику или сервис
+        await using var db = _contextFactory!.CreateDbContext();
         var users = await db.Users
             .OrderByDescending(u => u.Score)
-            .Take(10) // топ-10
+            .Take(10)
             .ToListAsync();
 
         if (!users.Any()) return "Лидеры пока отсутствуют.";
 
-        // Формируем текст в формате "Имя | Счёт"
         var sb = new StringBuilder();
         sb.AppendLine("🏆 Таблица лидеров:");
         sb.AppendLine("Имя | Счёт");

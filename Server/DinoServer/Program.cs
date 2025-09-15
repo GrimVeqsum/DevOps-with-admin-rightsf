@@ -53,8 +53,12 @@ class Program
         
         // ----------------- Telegram Bot -----------------
         var contextFactory = app.Services.GetRequiredService<IDbContextFactory<UserContext>>();
-        TelegramService.Initialize(contextFactory);
-        await TelegramService.SendMessage("Hi. Server is working");
+        var token = builder.Configuration["TELEGRAM_TOKEN"] ?? Environment.GetEnvironmentVariable("TELEGRAM_TOKEN");
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            TelegramService.Initialize(contextFactory, token);
+            await TelegramService.SendMessage("Hi. Server is working");
+        }
         
         app.Run();
         Console.WriteLine("Server is working");

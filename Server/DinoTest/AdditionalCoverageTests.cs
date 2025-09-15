@@ -42,7 +42,8 @@ namespace DinoServer.Tests
         [Test]
         public void TelegramService_Stop_ShouldCancel()
         {
-            var ctsField = typeof(TelegramService).GetField("_cts", BindingFlags.NonPublic | BindingFlags.Static);
+            var ctsField = typeof(TelegramService).GetField("_cts",
+                BindingFlags.NonPublic | BindingFlags.Static);
             var cts = new CancellationTokenSource();
             ctsField!.SetValue(null, cts);
             TelegramService.Stop();
@@ -56,15 +57,19 @@ namespace DinoServer.Tests
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             using var ctx = new UserContext(options);
+
             var factoryMock = new Mock<IDbContextFactory<UserContext>>();
             factoryMock.Setup(f => f.CreateDbContext()).Returns(ctx);
-            typeof(TelegramService).GetField("_contextFactory", BindingFlags.NonPublic | BindingFlags.Static)
+            typeof(TelegramService).GetField("_contextFactory",
+                BindingFlags.NonPublic | BindingFlags.Static)
                 ?.SetValue(null, factoryMock.Object);
 
-            var method = typeof(TelegramService).GetMethod("BuildLeaderboardAsync", BindingFlags.NonPublic | BindingFlags.Static);
+            var method = typeof(TelegramService).GetMethod("BuildLeaderboardAsync",
+                BindingFlags.NonPublic | BindingFlags.Static);
             var task = (Task<string>)method!.Invoke(null, null)!;
             var result = await task;
+
             Assert.AreEqual("Лидеры пока отсутствуют.", result.Trim());
         }
-
     }
+}

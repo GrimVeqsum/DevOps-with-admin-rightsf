@@ -24,11 +24,11 @@ namespace DinoServer.Tests
   [TestFixture]
   public class FullCoverageTests
   {
-    private UserContext _context;
-    private IDbContextFactory<UserContext> _factory;
-    private AddUserService _addService;
-    private GetUsersService _getService;
-    private UserController _controller;
+    private UserContext _context = null!;
+    private IDbContextFactory<UserContext> _factory = null!;
+    private AddUserService _addService = null!;
+    private GetUsersService _getService = null!;
+    private UserController _controller = null!;
 
     [SetUp]
     public void Setup()
@@ -78,7 +78,7 @@ namespace DinoServer.Tests
     [Test]
     public void AddUserService_AddNullUser_ShouldThrow()
     {
-      Assert.ThrowsAsync<ArgumentException>(async () => await _addService.AddUserAsync(null, 1));
+        Assert.ThrowsAsync<ArgumentException>(async () => await _addService.AddUserAsync(null!, 1));
     }
 
     [Test]
@@ -112,7 +112,7 @@ namespace DinoServer.Tests
     [Test]
     public async Task UserController_AddBook_NullUser_ShouldReturnBadRequest()
     {
-      var result = await _controller.AddBook(null, 1);
+        var result = await _controller.AddBook(null!, 1);
       Assert.IsInstanceOf<BadRequestObjectResult>(result);
     }
 
@@ -129,9 +129,9 @@ namespace DinoServer.Tests
       await _context.AddUserAsync(new TUser("User1", 10));
       await _context.AddUserAsync(new TUser("User2", 20));
 
-      var method = typeof(TelegramService).GetMethod("BuildLeaderboardAsync", BindingFlags.NonPublic | BindingFlags.Static);
-      var task = (Task<string>)method.Invoke(null, null);
-      var result = await task;
+        var method = typeof(TelegramService).GetMethod("BuildLeaderboardAsync", BindingFlags.NonPublic | BindingFlags.Static)!;
+        var task = (Task<string>)method.Invoke(null, null)!;
+        var result = await task;
 
       Assert.IsTrue(result.Contains("User2"));
       Assert.IsTrue(result.Contains("User1"));
