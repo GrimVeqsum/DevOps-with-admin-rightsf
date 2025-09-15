@@ -53,7 +53,10 @@ jobs:
     needs: build  # Зависит от успешного выполнения job 'build'
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+ codex/add-tests-for-updatescore-and-getallusers-bu79lw
 
+
+master
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
     
     steps:
@@ -78,10 +81,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
+ codex/add-tests-for-updatescore-and-getallusers-bu79lw
+    - name: Run tests and SonarQube analysis
+
 
     - name: Run tests and SonarQube analysis
 
     - name: Run tests
+master
 master
       working-directory: ./DevOps
       run: ./gradlew test sonarqube
