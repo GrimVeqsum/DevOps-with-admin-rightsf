@@ -8,12 +8,6 @@ using DinoServer.Users;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using TUser = DinoServer.Users.User;
 
 namespace DinoServer.Tests
