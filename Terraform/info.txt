@@ -1,0 +1,39 @@
+
+IAM token
+y0__xDhmPzWARjB3RMguoT0kBNDP55OJk8HaG6h7poiF2nJyNI6RA
+
+You have one cloud available: 'cloud-krailak' (id = b1gcrgvduhipovboqgc0 ). It is going to be used by default.
+
+Please choose folder to use:
+ [1] default (id = b1gdvic6l0c0tce4fov6)
+
+token: y0__xDhmPzWARjB3RMguoT0kBNDP55OJk8HaG6h7poiF2nJyNI6RA
+cloud-id: b1gcrgvduhipovboqgc0
+folder-id: b1gdvic6l0c0tce4fov6
+compute-default-zone: ru-central1-a
+
+
+yc resource-manager folder add-access-binding b1gdvic6l0c0tce4fov6 --role editor --subject userAccount: Krailak@yandex.ru
+
+
+yc resource-manager folder add-access-binding b1gdvic6l0c0tce4fov6 --role editor --subject userAccount:Krailak@yandex.ru
+
+
+id: ajemqmihagq2taccp52r
+yandex_passport_user_account:
+  login: krailak
+  default_email: Krailak@yandex.ru
+
+
+
+yc resource-manager folder add-access-binding b1gdvic6l0c0tce4fov6 --role editor --subject userAccount:$(yc iam user-account get --login krailak@yandex.ru --format json | jq -r .id)
+
+
+S:\User_section\Study\1cousre_maga\DevOps\Terraform>yc iam service-account create --name terraform-sa
+done (2s)
+id: ajeb5guordceis9joibo
+folder_id: b1gdvic6l0c0tce4fov6
+created_at: "2025-05-15T10:25:26.690818983Z"
+name: terraform-sa
+
+$sa_id = (yc iam service-account get terraform-sa --format json | ConvertFrom-Json).id yc resource-manager folder add-access-binding b1gdvic6l0c0tce4fov6 --role editor --subject serviceAccount:$sa_id

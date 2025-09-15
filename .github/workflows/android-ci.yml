@@ -1,0 +1,79 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    paths: 
+      - 'DevOps/**'  
+  pull_request:
+    branches: [ "main", "master" ]
+    paths: 
+      - 'DevOps/**'
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v2
+    
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('DevOps/gradle/wrapper/gradle-wrapper.properties', 'DevOps/build.gradle') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    
+    - name: Build with Gradle (Windows)
+      working-directory: ./DevOps
+      run: ./gradlew.bat assembleDebug
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: DevOps/app/build/outputs/apk/**/*.apk
+
+  test:
+    name: Run Tests
+    runs-on: windows-latest
+    needs: build  # Зависит от успешного выполнения job 'build'
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v2
+    
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('DevOps/gradle/wrapper/gradle-wrapper.properties', 'DevOps/build.gradle') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    
+    - name: Run tests
+      working-directory: ./DevOps
+      run: ./gradlew test

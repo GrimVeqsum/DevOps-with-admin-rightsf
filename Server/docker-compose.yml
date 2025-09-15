@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  dino-server:
+    image: cr.yandex/crpkvrrrkm0qabqoevs4/dino-server:latest #build .
+    ports:
+      - "7151:5198"
+    environment:
+      - DB_SERVER=mysql
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=DinoDB
+    depends_on:
+      - mysql
+
+  mysql:
+    image: cr.yandex/crpkvrrrkm0qabqoevs4/mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: DinoDB
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
+  
+  
+ 

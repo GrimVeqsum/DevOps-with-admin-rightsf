@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dino-server
+spec:
+  replicas: 1  # Количество реплик
+  selector:
+    matchLabels:
+      app: dino-server
+  template:
+    metadata:
+      labels:
+        app: dino-server
+    spec:
+      containers:
+      - name: dino-server
+        image: cr.yandex/crp10cd1h16114aqlaaj/dino-server:latest  # Замените на ваш образ
+        ports:
+        - containerPort: 5198  # Внутренний порт контейнера
+        env:
+        - name: DB_SERVER
+          value: "mysql-service"  # Имя сервиса MySQL
+        - name: DB_USER
+          value: "root"
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_NAME
+          value: "DinoDB"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dino-server
+spec:
+  type: LoadBalancer  # Или LoadBalancer, если нужен внешний доступ
+  selector:
+    app: dino-server
+  ports:
+    - protocol: TCP
+      port: 5198
+      targetPort: 80
+      nodePort: 31519  # Опционально (диапазон 30000-32767)

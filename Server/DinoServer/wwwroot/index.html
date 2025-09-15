@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #noResultsMessage {
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+            font-size: 0.8em;
+        }
+        .invalid {
+            border: 1px solid red;
+        }
+        .valid {
+            border: 1px solid green;
+        }
+    </style>
+</head>
+<body>
+<h1>Book List</h1>
+<label for="userId">User ID:</label>
+<input type="number" id="userId" name="userId" required>
+<span id="userIdError" class="error"></span>
+<br><br>
+
+<form id="addBookForm">
+    <h2>Добавить книгу</h2>
+    <label for="title">Название:</label>
+    <input type="text" id="title" name="title" required>
+    <span id="titleError" class="error"></span>
+
+    <label for="author">Автор:</label>
+    <input type="text" id="author" name="author" required>
+    <span id="authorError" class="error"></span>
+
+    <label for="genres">Жанры (через запятую):</label>
+    <input type="text" id="genres" name="genres" required>
+    <span id="genresError" class="error"></span>
+
+    <label for="publicationYear">Год публикации:</label>
+    <input type="number" id="publicationYear" name="publicationYear" required>
+    <span id="publicationYearError" class="error"></span>
+
+    <label for="annotation">Аннотация:</label>
+    <textarea id="annotation" name="annotation" required></textarea>
+    <span id="annotationError" class="error"></span>
+
+    <label for="isbn">ISBN:</label>
+    <input type="text" id="isbn" name="isbn" required>
+    <span id="isbnError" class="error"></span>
+
+    <button type="submit">Добавить</button>
+</form>
+
+<label for="searchType">Поиск по:</label>
+<select id="searchType">
+    <option value="title">Названию</option>
+    <option value="author">Автору</option>
+    <option value="isbn">ISBN</option>
+    <option value="keywords">Ключевым словам</option>
+</select>
+<input type="text" id="searchQuery" placeholder="Введите запрос">
+<button id="searchButton">Найти</button>
+<br><br>
+<button id="fetchBooksButton">Fetch Books</button>
+<div id="noResultsMessage">Ничего не найдено</div>
+<table id="bookTable">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genres</th>
+        <th>Publication Year</th>
+        <th>Annotation</th>
+        <th>ISBN</th>
+        <th>UserId</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script src="scripts/fetchBooks.js"></script>
+<script src="scripts/searchBooks.js"></script>
+<script src="scripts/addBook.js"></script>
+</body>
+</html>

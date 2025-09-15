@@ -1,0 +1,73 @@
+net start mysql80
+net start mysql84
+
+docker run -d -p 5198:80 --name my-csharp-server-inst Dino-server
+
+docker run -d -p 7151:5198 --name dino-server-2 my-csharp-server
+
+docker push brokensun/android-builder
+
+docker tag brokensun/my-csharp-server cr.yandex/crp10cd1h16114aqlaaj/my-csharp-server
+docker push cr.yandex/crp10cd1h16114aqlaaj/my-csharp-server
+
+docker tag brokensun/android-builder cr.yandex/crp10cd1h16114aqlaaj/android-builder
+docker push cr.yandex/crp10cd1h16114aqlaaj/android-builder
+
+docker tag brokensun/dino-server  cr.yandex/crp10cd1h16114aqlaaj/dino-server
+docker push cr.yandex/crp10cd1h16114aqlaaj/dino-server
+
+
+docker tag server-dino-server:latest cr.yandex/crp10cd1h16114aqlaaj/server-dino-server:latest
+docker push cr.yandex/crp10cd1h16114aqlaaj/server-dino-server:latest
+docker tag mysql:8.0 cr.yandex/crp10cd1h16114aqlaaj/mysql:8.0
+docker push cr.yandex/crp10cd1h16114aqlaaj/mysql:8.0
+
+ssh -i ~/.ssh/id_ed25519 ubuntu@89.169.179.85
+ssh -l ubuntu@89.169.179.85 158.160.0.186
+
+cr.yandex/crpkvrrrkm0qabqoevs4
+
+docker tag brokensun/dino-server  cr.yandex/crpkvrrrkm0qabqoevs4/dino-server
+docker push cr.yandex/crpkvrrrkm0qabqoevs4/dino-server
+
+docker tag brokensun/android-builder  cr.yandex/crpkvrrrkm0qabqoevs4/android-builder
+docker push cr.yandex/crpkvrrrkm0qabqoevs4/android-builder
+
+
+terraform apply
+ssh -i ~/.ssh/id_ed25519 ubuntu@89.169.162.5
+ssh -i ~/.ssh/id_ed25519 ubuntu@89.169.162.5
+
+Перейдите в Managed Service for Kubernetes → Создать кластер.
+Выберите конфигурацию (достаточно 1-2 нод типа standard-v2 с 2-4 vCPU).
+Укажите сеть и подсеть (если их нет, создайте автоматически).
+Нажмите Создать кластер.
+
+
+curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+source "/home/ubuntu/.bashrc"
+yc init --token y0__xDhmPzWARjB3RMguoT0kBNDP55OJk8HaG6h7poiF2nJyNI6RA --cloud-id b1gcrgvduhipovboqgc0 --folder-id b1gdvic6l0c0tce4fov6
+
+yc managed-kubernetes cluster get-credentials k8s-lab3 --external
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+
+ssh -i ~/.ssh/id_ed25519 ubuntu@89.169.179.85
+rsync -avz --progress username@server_ip:/путь/на/сервере/ /локальная/папка/
+
+rsync -avz - r "ssh -i ~/.ssh/id_ed25519" ubuntu@89.169.179.85:~/k8s/ S:/yc
+
+ssh -i C:/Users/User/.ssh/id_ed25519_new -o StrictHostKeyChecking=no ubuntu@158.160.0.186
+ssh -i C:/Users/User/.ssh/id_ed25519 ubuntu@158.160.0.186
+
+
+dotnet test DinoTest/DinoTest.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura  /p:CoverletOutput=coverage/
+
+dotnet test DinoTest/DinoTest.csproj --collect:"XPlat Code Coverage" --results-directory DinoTest/coverage
+
+dotnet test ./Server/DinoTest/DinoTest.csproj --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./Server/DinoTest/coverage/coverage.cobertura.xml --results-directory ./Server/DinoTest/coverage
+
+dotnet test ./Server/DinoTest/DinoTest.csproj  /p:CollectCoverage=true /p:CoverletOutput=./Server/DinoTest/coverage/coverage.cobertura.xml  /p:CoverletOutputFormat=cobertura --results-directory ./Server/DinoTest/coverage
+
+dotnet test ./Server/DinoTest/DinoTest.csproj /p:CollectCoverage=true /p:CoverletOutput=./Server/DinoTest/coverage/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura

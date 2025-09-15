@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    app.kubernetes.io/name: grafana
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000  # Порт, который слушает контейнер Grafana
+    protocol: TCP

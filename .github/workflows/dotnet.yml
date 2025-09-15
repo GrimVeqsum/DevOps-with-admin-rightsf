@@ -1,0 +1,153 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ "main", "lab4" ]
+  pull_request:
+    branches: [ "main", "lab4" ]
+
+jobs:
+  build:
+    name: Build Solution
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Restore dependencies
+        run: dotnet restore ./Server/BooksLab.sln
+      - name: Build Solution
+        run: dotnet build ./Server/BooksLab.sln --configuration Release --no-restore
+        id: build
+    outputs:
+      build_success: ${{ steps.build.outcome == 'success' }}
+
+  test:
+    name: Run Tests
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Restore dependencies (for tests)
+        run: dotnet restore ./Server/BooksLab.sln
+      - name: Run Tests with coverage
+        run: dotnet test ./Server/DinoTest/DinoTest.csproj /p:CollectCoverage=true /p:CoverletOutput=./Server/DinoTest/coverage/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura # /p:Threshold=80
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install SonarScanner
+        shell: powershell
+        run: |
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+      - name: Begin SonarQube Analysis
+        shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"lab4" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="./Server/DinoTest/coverage/coverage.cobertura.xml"
+
+      - name: Build Solution for SonarQube
+        run: dotnet build ./Server/BooksLab.sln --configuration Release
+
+      - name: End SonarQube Analysis
+        shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  save-in-cloud:
+    name: Push_to_Docker
+    needs: sonarqube
+    runs-on: ubuntu-latest
+    env:
+          IMAGE_NAME: dino-server
+          YC_TOKEN: ${{ secrets.YC_DOCKER_PASSWORD }}
+          YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+          YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+    steps:
+      - uses: actions/checkout@v4  # Добавьте этот шаг первым!
+      - name: Verify Server directory exists
+        run: |
+          ls -la
+          ls -la Server || { echo "❌ Server directory not found!"; exit 1; }
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0'  # Укажите вашу версию .NET
+      - name: Install YC CLI
+        run: |
+          # Установка в домашнюю директорию (без sudo)
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+          echo "YC_CLI_PATH=$HOME/yandex-cloud/bin" >> $GITHUB_ENV
+
+      - name: Verify YC CLI
+        run: |
+          $YC_CLI_PATH/yc --version
+          which yc
+
+      - name: Configure YC CLI
+        run: |
+          # Правильная авторизация через токен
+          yc config set token "${{ secrets.YC_TOKEN }}" --profile default
+          yc config set cloud-id "${{ secrets.YC_CLOUD_ID }}" --profile default
+          yc config set folder-id "${{ secrets.YC_FOLDER_ID }}" --profile default
+          
+          # Проверка
+          yc config list
+      - name: Login to Yandex Registry
+        run: |
+          # Создаем файл ключа
+          mkdir -p ~/.docker
+          echo '${{ secrets.YC_SERVICE_ACCOUNT_KEY }}' > ~/.docker/key.json
+          yc config set service-account-key  ~/.docker/key.json
+          IAM_TOKEN=$(yc iam create-token)
+          yc config set token $IAM_TOKEN
+          # Авторизуем Docker
+          echo "$IAM_TOKEN" | docker login \
+            --username iam \
+            --password-stdin \
+            cr.yandex/crpkvrrrkm0qabqoevs4
+
+      - name: Build Docker image
+        working-directory: Server
+        run: |
+          docker build -t cr.yandex/crpkvrrrkm0qabqoevs4/dino-server:latest .
+      - name: Push to YCR
+        run: |
+          docker push cr.yandex/crpkvrrrkm0qabqoevs4/dino-server:latest

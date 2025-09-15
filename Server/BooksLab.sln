@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DinoTest", "DinoTest\DinoTest.csproj", "{22405385-1E9D-4B6E-93DD-753D882E650C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DinoServer", "DinoServer\DinoServer.csproj", "{9CD59BBD-E85A-4230-A3D8-60CF1568C857}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22405385-1E9D-4B6E-93DD-753D882E650C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22405385-1E9D-4B6E-93DD-753D882E650C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22405385-1E9D-4B6E-93DD-753D882E650C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22405385-1E9D-4B6E-93DD-753D882E650C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CD59BBD-E85A-4230-A3D8-60CF1568C857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CD59BBD-E85A-4230-A3D8-60CF1568C857}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CD59BBD-E85A-4230-A3D8-60CF1568C857}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CD59BBD-E85A-4230-A3D8-60CF1568C857}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

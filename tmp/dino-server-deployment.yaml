@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dino-server
+  namespace: default
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: dino-server
+  template:
+    metadata:
+      labels:
+        app: dino-server
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5198"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: dino-server
+        image: cr.yandex/crp10cd1h16114aqlaaj/dino-server:latest
+        ports:
+        - containerPort: 5198
+          name: http
+        env:
+        - name: ASPNETCORE_URLS
+          value: "http://*:5198"  # Убедитесь, что сервер слушает на правильном порту
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /healthz       # Используйте правильный эндпоинт для проверки
+            port: 5198
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz       # Используйте правильный эндпоинт для проверки
+            port: 5198
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 3
