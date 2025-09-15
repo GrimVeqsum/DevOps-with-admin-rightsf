@@ -64,6 +64,7 @@ jacoco {
 
 tasks.withType<Test> {
     finalizedBy("jacocoTestReport")
+    finalizedBy(rootProject.tasks.named("sonarqube"))
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
