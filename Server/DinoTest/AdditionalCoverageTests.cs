@@ -8,6 +8,7 @@ using DinoServer.Users;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using TUser = DinoServer.Users.User;
 
 namespace DinoServer.Tests
 {
@@ -17,9 +18,9 @@ namespace DinoServer.Tests
         [Test]
         public void User_ToString_Equals_GetHashCode()
         {
-            var u1 = new User("Ann", 5);
-            var u2 = new User("Ann", 5);
-            var u3 = new User("Bob", 7);
+            var u1 = new TUser("Ann", 5);
+            var u2 = new TUser("Ann", 5);
+            var u3 = new TUser("Bob", 7);
 
             Assert.AreEqual("Ann, 5", u1.ToString());
             Assert.IsTrue(u1.Equals(u2));
@@ -34,7 +35,7 @@ namespace DinoServer.Tests
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             using var ctx = new UserContext(options);
-            ctx.AddBook(new User("Foo", 1));
+            ctx.AddBook(new TUser("Foo", 1));
             Assert.AreEqual(1, ctx.Users.Count());
         }
 
@@ -65,5 +66,6 @@ namespace DinoServer.Tests
             var result = await task;
             Assert.AreEqual("Лидеры пока отсутствуют.", result.Trim());
         }
+
     }
 }

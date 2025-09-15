@@ -6,6 +6,7 @@ using System.Text;
 using DinoServer.Users;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Polling;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DinoServer;
 
@@ -18,6 +19,7 @@ public static class TelegramService
     private static IDbContextFactory<UserContext> _contextFactory;
 
     // Инициализация бота
+    [ExcludeFromCodeCoverage]
     public static void Initialize(IDbContextFactory<UserContext> contextFactory)
     {
         _contextFactory = contextFactory;
@@ -35,6 +37,7 @@ public static class TelegramService
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken token)
     {
         if (update.Type == UpdateType.Message && update.Message != null)
@@ -61,6 +64,7 @@ public static class TelegramService
         }
     }
 
+    [ExcludeFromCodeCoverage]
     private static Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationToken token)
     {
         Console.WriteLine($"Telegram error: {exception.Message}");
@@ -68,6 +72,7 @@ public static class TelegramService
     }
 
     // Рассылка всем подписчикам
+    [ExcludeFromCodeCoverage]
     public static async Task SendMessage(string message)
     {
         if (_bot == null)

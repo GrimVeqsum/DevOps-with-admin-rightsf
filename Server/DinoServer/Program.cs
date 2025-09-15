@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Prometheus;
 using Telegram.Bot;
 using Telegram.Bot.Types; // Добавьте этот using
+using System.Diagnostics.CodeAnalysis;
 
 namespace DinoServer;
+[ExcludeFromCodeCoverage]
 class Program
 {
     
