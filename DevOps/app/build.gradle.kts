@@ -65,10 +65,13 @@ jacoco {
 tasks.withType<Test> {
     finalizedBy("jacocoTestReport")
     finalizedBy(rootProject.tasks.named("sonarqube"))
+ codex/add-tests-for-updatescore-and-getallusers-bu79lw
 }
 
 rootProject.tasks.named("sonarqube") {
     dependsOn("jacocoTestReport")
+
+master
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {

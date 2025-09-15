@@ -2,6 +2,7 @@
 plugins {
     id("com.android.application") version "8.2.2" apply false
     id("org.jetbrains.kotlin.android") version "1.9.22" apply false
+codex/add-tests-for-updatescore-and-getallusers-bu79lw
     id("org.sonarqube") version "3.5.0.2730"
 }
 
@@ -10,4 +11,7 @@ sonar {
         property("sonar.projectKey", "DevOps2")
         property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "http://89.169.191.232:9000")
     }
+
+    id("org.sonarqube") version "4.4.1.3373"
+master
 }
