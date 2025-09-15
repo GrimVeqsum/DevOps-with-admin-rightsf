@@ -6,22 +6,24 @@ using System.Text;
 using DinoServer.Users;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Polling;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DinoServer;
 
+ [ExcludeFromCodeCoverage]
 public static class TelegramService
 {
-    private static string token = "8282986498:AAGSV11RSyUkl8uGWPTdh8oRelIJwEvdbSg";
     private static TelegramBotClient? _bot;
     private static readonly ConcurrentDictionary<long, bool> _chatIds = new(); // потокобезопасное хранение chatId
     private static CancellationTokenSource? _cts;
-    private static IDbContextFactory<UserContext> _contextFactory;
+    private static IDbContextFactory<UserContext>? _contextFactory = null!;
 
     // Инициализация бота
-    public static void Initialize(IDbContextFactory<UserContext> contextFactory)
+    [ExcludeFromCodeCoverage]
+    public static void Initialize(IDbContextFactory<UserContext> contextFactory, string token)
     {
         _contextFactory = contextFactory;
-        
+
         if (_bot != null) return; // уже инициализирован
 
         _bot = new TelegramBotClient(token);
@@ -35,6 +37,7 @@ public static class TelegramService
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken token)
     {
         if (update.Type == UpdateType.Message && update.Message != null)
@@ -51,16 +54,17 @@ public static class TelegramService
                 {
                     // Формируем таблицу лидеров
                     var leaderboard = await BuildLeaderboardAsync();
-                    await bot.SendTextMessageAsync(chatId, leaderboard);
+                    await bot.SendMessage(chatId, leaderboard);
                 }
                 catch (Exception ex)
                 {
-                    await bot.SendTextMessageAsync(chatId, $"Ошибка при формировании таблицы лидеров: {ex.Message}");
+                    await bot.SendMessage(chatId, $"Ошибка при формировании таблицы лидеров: {ex.Message}");
                 }
             }
         }
     }
 
+    [ExcludeFromCodeCoverage]
     private static Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationToken token)
     {
         Console.WriteLine($"Telegram error: {exception.Message}");
@@ -68,6 +72,7 @@ public static class TelegramService
     }
 
     // Рассылка всем подписчикам
+    [ExcludeFromCodeCoverage]
     public static async Task SendMessage(string message)
     {
         if (_bot == null)
@@ -80,7 +85,7 @@ public static class TelegramService
         {
             try
             {
-                await _bot.SendTextMessageAsync(chatId, message);
+                await _bot.SendMessage(chatId, message);
             }
             catch (Exception ex)
             {

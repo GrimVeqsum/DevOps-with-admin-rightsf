@@ -2,15 +2,19 @@ namespace DinoServer.Users;
 
 public class User
 {
-    public int Id { get; set; }          
-    public  string Name { get; set; }        
-    public  int Score  { get; set; } 
-    
+    public int Id { get; set; }
+
+    public required string Name { get; set; }
+
+    public int Score { get; set; }
+
     public User()
     {
-        
+        Name = string.Empty;
     }
-    /* Конструктор класса */
+
+    // Конструктор класса
+    [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
     public User(string name, int score)
     {
         Name = name;
@@ -18,23 +22,10 @@ public class User
     }
 
     // Перегрузка функции ToString
-    public override string ToString()
-    {
-        return $"{Name}, {Score}";
-    }
-    
-    public override bool Equals(object obj)
-    {
-        if (obj == null || GetType() != obj.GetType())
-            return false;
+    public override string ToString() => $"{Name}, {Score}";
 
-        var book = (User)obj;
-        return Name == book.Name &&
-               Score == book.Score;
-    }
+    public override bool Equals(object? obj) =>
+        obj is User user && Name == user.Name && Score == user.Score;
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Score);
-    }
+    public override int GetHashCode() => HashCode.Combine(Name, Score);
 }
