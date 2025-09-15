@@ -51,6 +51,8 @@ jobs:
     name: Run Tests
     runs-on: windows-latest
     needs: build  # Зависит от успешного выполнения job 'build'
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     
     steps:
     - uses: actions/checkout@v4
@@ -63,7 +65,7 @@ jobs:
 
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
-    
+
     - name: Cache Gradle dependencies
       uses: actions/cache@v4
       with:
@@ -73,7 +75,7 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('DevOps/gradle/wrapper/gradle-wrapper.properties', 'DevOps/build.gradle') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    
+
     - name: Run tests
       working-directory: ./DevOps
       run: ./gradlew test
